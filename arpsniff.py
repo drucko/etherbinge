@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# This tool COULD be run together with arping.py to list any ARP resonse with a
+# This tool COULD be run together with arping.py to list any ARP resonse with a source not our own
 
 """ http://tools.ietf.org/rfc/rfc5227.txt
 RFC 5227, IPv4 Address Conflict Detection, July 2008, page 4-5
