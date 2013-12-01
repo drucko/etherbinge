@@ -1,5 +1,7 @@
 #! /usr/bin/env python
-# This tool COULD be run together with arping.py to list any ARP resonse with a source not our own
+# Note that this script requires scapy to be installed (correctly)
+# Additionally, it requires root privileges to run.
+# This tool COULD be run together with arping.py to list any ARP resonse with a source not our own.
 
 """ http://tools.ietf.org/rfc/rfc5227.txt
 RFC 5227, IPv4 Address Conflict Detection, July 2008, page 4-5
@@ -17,10 +19,7 @@ conveys both a question ("Is anyone using this address?") and an
 implied statement ("This is the address I hope to use.").
 """
 
-# suppress annoying warnings
-import logging
-logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
-
+# Start listening for ARP packets on specified interface
 import sys,os
 if len(sys.argv) != 2:
     print "Usage: arpsniff.py \n  eg: sudo ./arpsniff.py eth0"
@@ -30,14 +29,22 @@ if len(sys.argv) != 2:
 if os.geteuid() != 0:
     exit("You need to have root privileges to run this script.\nPlease try again, this time using 'sudo'. Exiting.")
 
-# Load specific modules from scapy
-from scapy.all import ARP,sniff,conf,get_if_hwaddr
+# Suppress annoying warnings about IPv6
+import logging
+logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 
-# Set listening interface
-conf.iface = sys.argv[1]
+# Load specific modules from scapy
+try:
+    from scapy.all import ARP,sniff,conf,get_if_hwaddr
+except:
+    print "please install scapy (correctly) first"
+    exit(1)
 
 # Use valid hwaddr, even if the NIC is not up
 macaddress=get_if_hwaddr(sys.argv[1])
+
+# Set listening interface
+conf.iface = sys.argv[1]
 
 # Print out the ARP.hwsrc (MAC) and ARP.psrc (IP) of ARP request/response not created by us
 def arp_monitor_callback(pkt):
@@ -45,5 +52,6 @@ def arp_monitor_callback(pkt):
         if pkt[ARP].hwsrc != macaddress:
             return pkt.sprintf("%ARP.hwsrc%,%ARP.psrc%")
 
+# Start sniffing and print to console immediately 
 sniff(prn=arp_monitor_callback, filter="arp", store=0)
 

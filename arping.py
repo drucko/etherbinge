@@ -1,8 +1,7 @@
 #!/usr/bin/env python
-# note that this script requires scapy to be installed (correctly)
-# additionally, it requires root privileges to run.
-# Adapted from http://cruft.blogspot.nl/2009/01/arp-ping-using-scapy.html
-
+# Note that this script requires scapy to be installed (correctly)
+# Additionally, it requires root privileges to run.
+# Adapted from http://cruft.blogspot.nl/2009/01/arp-ping-using-scapy.html.
 # This tool MUST be run to elicit ARP resonses without assigning an IP address or creating collisions.
 # This tool COULD be run with arpsniff to also find ARP information we did not elicit.
 
@@ -21,9 +20,6 @@ address' field MUST be set to the address being probed.  An ARP Probe
 conveys both a question ("Is anyone using this address?") and an
 implied statement ("This is the address I hope to use.").
 """
-
-# Set to False if you would like to only have the "CSV" output to console
-debug = True
 
 # Read CIDR range to scan and network interface to send on from command
 import sys,os
@@ -49,6 +45,8 @@ except:
 # Use valid hwaddr, even if the NIC is not up
 macaddress=get_if_hwaddr(sys.argv[2])
 
+# Set to False if you would like to only have the "CSV" output to console
+debug = True
 # Select output type to console
 if debug:
     conf.verb=4
